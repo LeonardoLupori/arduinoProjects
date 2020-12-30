@@ -30,8 +30,8 @@ unsigned long timeSinceLastCommand = 0;
 
 long lickReading = 0;
 bool lickState = false;
-const int lickTttlLength = 3;
-unsigned long lastLick = 0;
+const int lickTttlLength = 2;
+long lastLick = 0;
 
 bool currDirection = false;
 const bool forward = false;   // renaming for clarity
@@ -41,13 +41,15 @@ const bool reverse = true;    // renaming for clarity
 int NUM_BUTTONS = sizeof(pinButtonsUI) / sizeof(pinButtonsUI[0]);
 Bounce * buttons = new Bounce[NUM_BUTTONS];
 
+String lickMsg = "_lick";
+
 //--------------------------------------------------------
 // SETUP
 //--------------------------------------------------------
 void setup() {
   
   // CAPACITIVE sensor
-  cSensor.set_CS_Timeout_Millis(100);
+  cSensor.set_CS_Timeout_Millis(1000);
 
   pinMode(pinOutLick,OUTPUT);
   pinMode(pinOutCue,OUTPUT);
@@ -83,17 +85,31 @@ void loop() {
 
   // Lick sensor update and TTL output
   if(lickState==false && millis()-lastLick > lickTttlLength){
-    lickReading =  cSensor.capacitiveSensor(20);
+    lickReading =  cSensor.capacitiveSensor(10);
     if(lickReading>2000){
       lickState = true;
       lastLick = millis();
       digitalWrite(pinOutLick,HIGH);
+      String msg = lastLick + lickMsg;
+      Serial.println(msg);
+      //Serial.write(13);
+      //Serial.write(10);
     }  
   } 
   else if(lickState==true && millis()-lastLick > lickTttlLength){
-    lickState = false;
-    digitalWrite(pinOutLick,LOW);
+    lickReading =  cSensor.capacitiveSensor(10
+    );
+    if(lickReading<2000){
+      lickState = false;
+      digitalWrite(pinOutLick,LOW);
+    }
   }
+
+
+
+
+
+  
   
 
   

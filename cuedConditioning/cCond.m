@@ -3,7 +3,11 @@
 serialportlist("available")
 
 % Connect to a specific serial port
-arduinoObj = serialport("COM5",9600);
+arduinoObj = serialport("COM3",9600,'Timeout',2);
+configureCallback(arduinoObj,"terminator",@echoSerial)
+%%
+
+writeline(arduinoObj,'asss')
 
 %%
 UserData = struct(...

@@ -1,13 +1,33 @@
+clear all
 
 % Get all the available serial ports on this PC
 serialportlist("available")
 
 % Connect to a specific serial port
 arduinoObj = serialport("COM3",9600,'Timeout',2);
-configureCallback(arduinoObj,"terminator",@echoSerial)
+% configureTerminator(arduinoObj,"CR/LF")
+pause(2)
+writeline(arduinoObj,'handshakeFromMATLAB')
+a = readline(arduinoObj)
+
+% configureCallback(arduinoObj,"terminator",@echoSerial)
 %%
 
-writeline(arduinoObj,'asss')
+% writeline(arduinoObj,'handshakeFromMATLAB')
+writeline(arduinoObj,'handshakeFromMATLAB')
+a = readline(arduinoObj)
+
+%%
+
+writeline(app.serialObj,'handshakeFromMATLAB');
+msg = readline(app.serialObj)
+
+
+%%
+
+disp(readline(arduinoObj))
+
+
 
 %%
 UserData = struct(...

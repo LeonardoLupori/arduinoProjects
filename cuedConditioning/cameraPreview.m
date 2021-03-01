@@ -22,7 +22,7 @@ function varargout = cameraPreview(varargin)
 
 % Edit the above text to modify the response to help cameraPreview
 
-% Last Modified by GUIDE v2.5 13-Aug-2020 17:12:55
+% Last Modified by GUIDE v2.5 01-Mar-2021 09:33:02
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -232,3 +232,27 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% --- Executes on button press in btnROI.
+function btnROI_Callback(hObject, eventdata, handles)
+% hObject    handle to btnROI (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+roi = drawrectangle(handles.axImg);
+roiPos = floor(roi.Position);
+warning('off', 'imaq:pointgrey:roiChanged');
+stoppreview(handles.vid);
+handles.vid.ROIPosition = roiPos;
+preview(handles.vid,handles.img);
+delete(roi)
+
+% --- Executes on button press in btnRstROI.
+function btnRstROI_Callback(hObject, eventdata, handles)
+% hObject    handle to btnRstROI (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+stoppreview(handles.vid);
+handles.vid.ROIPosition = [0, 0, handles.vid.VideoResolution];
+preview(handles.vid,handles.img);
+

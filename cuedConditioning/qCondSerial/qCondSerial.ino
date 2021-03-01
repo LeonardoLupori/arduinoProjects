@@ -6,6 +6,7 @@
 const int stepsReward = 12;
 const int stepLenghtMicroseconds = 1000;
 const int cueFrequency = 4000;
+const int wrongCueFrequency = 3000;
 const int cueDuration = 500;
 const int delayCueReward = 2000;
 
@@ -62,6 +63,7 @@ String lickMsg = "_lick";
 String rewardMsg = "_reward";
 String cueMsg = "_cue";
 String onlyCueMsg = "_onlyCue";
+String wrongCueMsg = "_wrongCue";
 
 long cueTime = 0;
 bool waitingForReward = false;

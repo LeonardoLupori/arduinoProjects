@@ -72,6 +72,11 @@ void cue(){
   tone(pinSound, cueFrequency, cueDuration);
 }
 
+// ----------------
+void wrongCue(){
+  tone(pinSound, wrongCueFrequency, cueDuration);
+}
+
 //--------------------------------------------------------
 // STEPPER MOTOR RELATED FUNCTIONS
 //--------------------------------------------------------
@@ -140,7 +145,11 @@ int recieveFromMATLAB(){
       String msg = millis() + cueMsg;
       sendToMATLAB(msg);
     }
-    
+    else if(msg=="wrongCue"){
+      wrongCue();
+      String msg = millis() + wrongCueMsg;
+      sendToMATLAB(msg);
+    }
     else if(msg=="trigger"){
       String trigMsg = "_trigger";
       String msg = millis() + trigMsg;

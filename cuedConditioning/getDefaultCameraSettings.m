@@ -7,7 +7,7 @@ function settings = getDefaultCameraSettings()
 
 settings.adaptor = 'pointgrey';                  % AdaptorName. See the folder camera_support for installing the adaptor
 settings.deviceID = 1;                           % In case there are multiple cameras
-settings.format = 'F7_Mono8_1288x964_Mode0';     % Acquisition format (1x1, 2x2,4x4 binning; various bit-depth)
+settings.format = 'F7_Mono8_644x482_Mode1';     % Acquisition format (1x1, 2x2,4x4 binning; various bit-depth)
 % **********************************
 %       AVAILABLE FORMATS
 %     {'F7_Mono12_1288x964_Mode0'}

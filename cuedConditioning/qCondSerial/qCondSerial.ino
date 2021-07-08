@@ -5,8 +5,8 @@
 // -------------------------------------------------------
 const int stepsReward = 12;
 const int stepLenghtMicroseconds = 1000;
-const int cueFrequency = 4000;
-const int wrongCueFrequency = 3000;
+const int cueFrequency = 3150;
+const int wrongCueFrequency = 4400;
 const int cueDuration = 500;
 const int delayCueReward = 2000;
 

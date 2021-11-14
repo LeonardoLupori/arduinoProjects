@@ -10,6 +10,7 @@ Behavioral setup for *head-fixed* experiments testing the preference toward food
 
 ## Description
 
+
 This apparatus and code allows to perform a closed-loop, Go/NoGo orientation discrimination task. In this task, mice are presented visual cues (square-wave drifting gratings) on an LCD monitor for 2 s, followed by a 2 s response window and a 6 s inter-trial interval. Mice can respond to the visual stimulation by licking the lick spout during the 2s response window. Licking during this window will trigger the delivery of a high-calorie liquid, a bitter solution of nothing, based on the visual stimulus presented. Licking during the stimulis window has no effect, and is not negatively reinforced.
 
 Mice are trained to discriminate between:

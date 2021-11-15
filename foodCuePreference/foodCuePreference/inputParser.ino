@@ -1,53 +1,63 @@
 /*  INPUT PARSER
- *  Series of functions for parsing the serial messages that Python sends
- *  to the Arduino
- */
+    Series of functions for parsing the serial messages that Python sends
+    to the Arduino
+*/
 
 
-char checkForSerialInputs(bool echoing){
-  if(Serial.available() > 0){
+// Main function for recieving serial communication from Python.
+// The echoing argument determines whether or not the arduino sends
+// back the messages it recieves (for debugging purposes)
+// ---------------------------------------------------
+void checkForSerialInputs(bool echoing) {
+  if (Serial.available() > 0) {
     char message = Serial.read();
-    response = parseMessage(message);
-    if(echoing){
-      return response;
+    char response = parseMessage(message);
+    if (echoing) {
+      Serial.println(response);
     }
   }
 }
 
 
-// --------------------------------------------------------------
-// Function for PARSING the serial inputs from Python
-// --------------------------------------------------------------
-
-char parseMessage(char msg){
+// Function for parsing the serial inputs from Python
+// ---------------------------------------------------
+char parseMessage(char msg) {
   switch (msg) {
-  case 'T':         // Start a new CONDITIONAL REWARD TRIAL
-    trial_condReward();
-    return 'T';
-    break;
-  case 'P':         // Start a new PAVLOVIAN TRIAL
-    return 'P';
-    break;
-  case 'R':         // Deliver REWARD once
-    return 'R';
-    break;
-  case 'Q':         // Deliver AVERSIVE (quinine) once
-    return 'Q';
-    break;
-  case 'L':         // Fast FORWARD of the syringe pump
-    return 'L';
-    break;
-  case 'J':         // Fast BACKWARD of the syringe pump
-    return 'J';
-    break;
-  default:          // if nothing else matches, do the default
-    break;
+    case 'A':         // Start a AD-LIBITUM TRIAL
+      responseMode = "AL";
+      return 'A';
+    case 'P':         // Start a PAVLOVIAN TRIAL
+      return 'P';
+    case 'T':         // Start a CONDITIONAL TRIAL
+      return 'T';
+    case 'Z':         // Response window for FOOC-CUE
+      responseMode = "FC";
+      return 'Z';
+    case 'X':         // Response window for QUININE-CUE
+      responseMode = "QC";
+      return 'X';
+    case 'C':         // Response window for NEUTRAL-CUE
+      responseMode = "NC";
+      return 'C';
+    case 'I':         // Start of an INTERTRIAL
+      return 'I';
+    case 'R':         // Deliver a single dose of ENSURE
+      return 'R';
+    case 'V':         // Deliver a single dose of QUININE
+      return 'V';
+    case 'L':         // Fast FORWARD of the ENSURE syringe pump
+      ff_quinine();
+      return 'L';
+    case 'K':         // Fast BACKWARD of the ENSURE syringe pump
+      fb_quinine();
+      return 'K';
+    case 'M':         // Fast FORWARD of the quinine syringe pump
+      ff_quinine();
+      return 'M';
+    case 'N':         // Fast BACKWARD of the quinine syringe pump
+      fb_quinine();
+      return 'N';
+    default:          // if nothing else matches, do the default
+      return msg;
   }
-}
-
-// --------------------------------------------------------------
-// Beginning of a new CONDITIONAL REWARD TRIAL
-// --------------------------------------------------------------
-void trial_condReward(){
-  Serial.println("recieved.");
 }

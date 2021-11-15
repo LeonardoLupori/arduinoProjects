@@ -1,24 +1,52 @@
 // Task callback for sending the current threadmill position
-void sendSpeed_Clbk(){
-  Serial.println(millis());
+// ---------------------------------------------------
+void sendSpeed_Clbk() {
+  String message = packageMessage("p", millis(), runningPosition);
+  Serial.println(message);
 }
 
 
-
-
 // Task callback for sending licking events
-void sendLick_clbk(){
-  // check for touch sensor, if there's a lick send it  
-  Serial.println('l');
-
-
-  sensorReading = touchRead(T9);
-  readingMovingAvg = mySensor.reading(sensorReading);
-  if(readingMovingAvg<= THRESHOLD && !touched) {
-    String message = String("TOUCH") + millis();
+// ---------------------------------------------------
+void sendLick_clbk() {
+  if (detectLick()) {
+    // First, Sent the lick event to Python through serial
+    String message = packageMessage("t", millis(), 0);
     Serial.println(message);
-    touched = true;
-  } else if(readingMovingAvg > THRESHOLD){
-    touched = false;
+    // Second, check if we are currently in a response window.
+    // If we are, deliver the appropriate solution
+    if (responseMode == "FC") {
+      deliver_ensure();
+    } else if (responseMode == "QC"){
+      deliver_quinine();
+    } else if (responseMode == "AL"){
+      deliver_ensure();
+    }
+    responseMode = "none";      // Resets the response mode until next trial
   }
+}
+
+
+// Function to detect licking events 
+// ---------------------------------------------------
+bool detectLick() {
+  sensorReading = touchRead(PIN_LICKSENSOR);                  // Read current value
+  readingMovingAvg = touchMovingAvg.reading(sensorReading);   // Add it to the running average object and get the current AVG
+  if (readingMovingAvg <= THRESHOLD && !touched) {
+    touched = true;
+    return true;
+  } else if (readingMovingAvg > THRESHOLD && touched) {
+    touched = false;
+    return false;
+  } else{
+    return false;
+  }
+}
+
+// Utility function for creating comma separated strings
+// to send by serial communication to Python
+// ---------------------------------------------------
+String packageMessage(String code, int timeStamp, int value) {
+  String messageOne = code + "," + timeStamp + "," + value;
+  return messageOne;
 }

@@ -1,6 +1,6 @@
 # Food Cue Preference
 
-Behavioral setup for *head-fixed* experiments testing the preference toward food-predictive visual cues. This is my personal implementation of the behavioral test found in (Burgess et. al. 2016, and following papers from the Andermann Lab.)
+Behavioral setup for *head-fixed* experiments testing the preference toward food-predictive visual cues. This is my personal implementation of the behavioral test found in (Burgess et. al. 2016 [^1] , and following papers from the Andermann Lab.)
 
 ## Content
 
@@ -31,4 +31,24 @@ The microcontroller detects licking and running activity of the mouse, control t
 
 ## References
 
-* Burgess CR, Ramesh RN, Sugden AU, Levandowski KM, Minnig MA, Fenselau H, Lowell BB, Andermann ML. *Hunger-Dependent Enhancement of Food Cue Responses in Mouse Postrhinal Cortex and Lateral Amygdala*. Neuron. 2016 Sep 7;91(5):1154-1169. doi: 10.1016/j.neuron.2016.07.032.
+[^1]: Burgess CR, Ramesh RN, Sugden AU, Levandowski KM, Minnig MA, Fenselau H, Lowell BB, Andermann ML. *Hunger-Dependent Enhancement of Food Cue Responses in Mouse Postrhinal Cortex and Lateral Amygdala*. Neuron. 2016 Sep 7;91(5):1154-1169. doi: 10.1016/j.neuron.2016.07.032.
+
+
+# Detailed description
+
+## Communication protocol
+The ESP32 and Python communicate through a serial USB connection.
+The communication is bidirectional: 
+* Python sends to the microcontroller messages containing a single byte
+(a single character), and each character has a different meaning.
+As a convention, messages that Python sends to the Arduino are **uppercase**, while messages going from arduino to Python are **lowercase**.
+* On the other side, the microcontroller sends back messages that are composed of three, comma-separated values:  
+   >"code,timeStamp,value"
+   * *code* : a byte (a single character) containing info of a particular event;
+   * *timeStamp*: time (in milliseconds) of the event;
+   * *value*: (optional) an optional value.
+
+### Python -> ESP32 codes
+|Code|Meaning|Description|
+|:---:|:---|:---|
+|A|Beginning of an *Ad-libitum* trial| |      

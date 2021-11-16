@@ -42,8 +42,10 @@ char parseMessage(char msg) {
     case 'I':         // Start of an INTERTRIAL
       return 'I';
     case 'R':         // Deliver a single dose of ENSURE
+      deliver_ensure();
       return 'R';
     case 'V':         // Deliver a single dose of QUININE
+      deliver_quinine();
       return 'V';
     case 'L':         // Fast FORWARD of the ENSURE syringe pump
       ff_quinine();

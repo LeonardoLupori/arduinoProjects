@@ -66,3 +66,19 @@ As a general rule, messages that Python sends to the Arduino are **uppercase**.
 |Q|||
 
 ### ESP32 -> Python codes
+
+the microcontroller sends back messages that are composed of three, comma-separated values:  
+   >"code,timeStamp,value"
+   * *code* : a byte (a single character) containing info of a particular event. As a general rule, these codes are **lowercase**;
+   * *timeStamp*: time (in milliseconds) of the event;
+   * *value*: (optional) an optional value.
+
+|Code|Meaning|Details|
+|:---:|:---|:---|
+|a|Signals the beginning of an ***A**d-libitum* trial||
+|p|Signals the beginning of a ***P**avlovian* Trial||
+|t|Signals the beginning of a *Conditional **T**rial*||
+|d|Contains the current **d**istance run by the mouse|The distance code is sent periodically with a timestamp and a value for the distance|
+|l|Signals a **L**icking event||
+|e|A dose of **E**nsure is delivered||
+|q|A dose of **Q**uinine is delivered||

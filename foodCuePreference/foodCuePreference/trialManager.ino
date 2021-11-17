@@ -1,78 +1,94 @@
-// MAIN TRIAL MANAGER FUNCTION
+// AD-LIBITUM TRIAL
 // ---------------------------------------------------
-void trialManager() {
-  if (trialRunning == false) {
-    return;
-  }
-
-
+void trial_adLibitum() {
+  trialStartTime = millis();
+  responseMode = "AL";
+  Serial.println(packageMessage("a", millis(), 0));
 }
-
-
-
-
 
 // CONDITIONAL REWARD TRIAL
 // ---------------------------------------------------
 void trial_condReward() {
-  trialRunning = true;            // Set global variable
   trialStartTime = millis();
-  Serial.println("Conditional reward trial.");
+  responseMode = "none";
+  Serial.println(packageMessage("t", millis(), 0));
 }
 
 // PAVLOVIAN TRIAL
 // ---------------------------------------------------
 void trial_pavlovian() {
-  trialRunning = true;            // Set global variable
   trialStartTime = millis();
-  Serial.println("Pavlovian trial.");
+  responseMode = "none";
+  Serial.println(packageMessage("p", millis(), 0));
 }
 
 // DELIVER ENSURE
 // ---------------------------------------------------
 void deliver_ensure() {
   mustDeliverEnsure = true;
-  Serial.println("Ensure delivery.");
 }
 
 // DELIVER QUININE
 // ---------------------------------------------------
 void deliver_quinine() {
-  Serial.println("Quinine delivery.");
+  mustDeliverQuinine = true;
 }
 
 // FAST FORWARD ENSURE
 // ---------------------------------------------------
 void ff_ensure() {
-  Serial.println("Fast-forward Ensure.");
+  for (int j = 0; j < NUM_STEP_FAST_DELIVERY; j++) {
+    doStep(PIN_STEP_ENSURE, STEP_LENGHT_MICROSECONDS);
+  }
 }
 
 // FAST FORWARD QUININE
 // ---------------------------------------------------
 void ff_quinine() {
-  Serial.println("Fast-forward Quinine.");
+  for (int j = 0; j < NUM_STEP_FAST_DELIVERY; j++) {
+    doStep(PIN_STEP_QUININE, STEP_LENGHT_MICROSECONDS);
+  }
 }
 
 // FAST BACKWARD ENSURE
 // ---------------------------------------------------
 void fb_ensure() {
-  Serial.println("Fast-backward Ensure.");
+  digitalWrite(PIN_DIR_ENSURE, LOW);        // Switch the stepper direction to go backwards
+  for (int j = 0; j < NUM_STEP_FAST_DELIVERY; j++) {
+    doStep(PIN_STEP_ENSURE, STEP_LENGHT_MICROSECONDS);
+  }
+  digitalWrite(PIN_DIR_ENSURE, HIGH);       // Switch back to forward the stepper direction
 }
 
 // FAST BACKWARD QUININE
 // ---------------------------------------------------
 void fb_quinine() {
-  Serial.println("Fast-backward Quinine.");
+  digitalWrite(PIN_DIR_QUININE, LOW);        // Switch the stepper direction to go backwards
+  for (int j = 0; j < NUM_STEP_FAST_DELIVERY; j++) {
+    doStep(PIN_STEP_QUININE, STEP_LENGHT_MICROSECONDS);
+  }
+  digitalWrite(PIN_DIR_QUININE, HIGH);       // Switch back to forward the stepper direction
 }
 
 
+
+// STEPPER MOTORS MANAGER
+// ---------------------------------------------------
+/* This function is the main manager of stepper motors.
+ * It runs on a parallel processor so that the delay in every step
+ * does not interfere with the rest of the microcontroller's tasks.
+ * It checks two global variables: mustDeliverEnsure and mustDeliverQuinine
+ * and, in caseone of them is true, it delivers the appropriate liquid.
+ */
 void stepperManager(void * pvParameters) {
   for (;;) {
     if (mustDeliverEnsure) {
-      giveEnsure(NUM_STEPS);
+      Serial.println(packageMessage("e", millis(), 0));
+      giveEnsure();
       mustDeliverEnsure = false;
     } else if (mustDeliverQuinine) {
-      giveQuinine(NUM_STEPS);
+      Serial.println(packageMessage("q", millis(), 0));
+      giveQuinine();
       mustDeliverQuinine = false;
     }
     delay(10);
@@ -80,8 +96,8 @@ void stepperManager(void * pvParameters) {
   vTaskDelete( NULL );
 }
 
-
-// ----------------
+// PERFORMS A SINGLE STEP
+// ---------------------------------------------------
 void doStep(int pinStep, int stepLength_uS) {
   digitalWrite(pinStep, HIGH);
   delayMicroseconds(stepLength_uS);
@@ -89,16 +105,18 @@ void doStep(int pinStep, int stepLength_uS) {
   delayMicroseconds(stepLength_uS);
 }
 
-// ----------------
-void giveEnsure(int stepsReward) {
-  for (int j = 0; j < stepsReward; j++) {
+// DELIVERS A PORTION OF ENSURE
+// ---------------------------------------------------
+void giveEnsure() {
+  for (int j = 0; j < NUM_STEP_DELIVERY; j++) {
     doStep(PIN_STEP_ENSURE, STEP_LENGHT_MICROSECONDS);
   }
 }
 
-// ----------------
-void giveQuinine(int stepsReward) {
-  for (int j = 0; j < stepsReward; j++) {
+// DELIVERS A PORTION OF QUININE
+// ---------------------------------------------------
+void giveQuinine() {
+  for (int j = 0; j < NUM_STEP_DELIVERY; j++) {
     doStep(PIN_STEP_QUININE, STEP_LENGHT_MICROSECONDS);
   }
 }

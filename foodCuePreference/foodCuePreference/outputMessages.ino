@@ -1,7 +1,7 @@
 // Task callback for sending the current threadmill position
 // ---------------------------------------------------
-void sendSpeed_Clbk() {
-  String message = packageMessage("p", millis(), runningPosition);
+void sendDistance_Clbk() {
+  String message = packageMessage("d", millis(), runningPosition);
   Serial.println(message);
 }
 
@@ -11,7 +11,7 @@ void sendSpeed_Clbk() {
 void sendLick_clbk() {
   if (detectLick()) {
     // First, Sent the lick event to Python through serial
-    String message = packageMessage("t", millis(), 0);
+    String message = packageMessage("l", millis(), 0);
     Serial.println(message);
     // Second, check if we are currently in a response window.
     // If we are, deliver the appropriate solution
@@ -27,7 +27,7 @@ void sendLick_clbk() {
 }
 
 
-// Function to detect licking events 
+// Function to detect single licking events 
 // ---------------------------------------------------
 bool detectLick() {
   sensorReading = touchRead(PIN_LICKSENSOR);                  // Read current value
@@ -46,7 +46,7 @@ bool detectLick() {
 // Utility function for creating comma separated strings
 // to send by serial communication to Python
 // ---------------------------------------------------
-String packageMessage(String code, int timeStamp, int value) {
+String packageMessage(String code, unsigned long timeStamp, long value) {
   String messageOne = code + "," + timeStamp + "," + value;
   return messageOne;
 }

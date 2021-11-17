@@ -3,7 +3,6 @@
     to the Arduino
 */
 
-
 // Main function for recieving serial communication from Python.
 // The echoing argument determines whether or not the arduino sends
 // back the messages it recieves (for debugging purposes)
@@ -11,9 +10,9 @@
 void checkForSerialInputs(bool echoing) {
   if (Serial.available() > 0) {
     char message = Serial.read();
-    char response = parseMessage(message);
+    char answerBack = parseMessage(message);
     if (echoing) {
-      Serial.println(response);
+      Serial.println(answerBack);
     }
   }
 }
@@ -24,42 +23,46 @@ void checkForSerialInputs(bool echoing) {
 char parseMessage(char msg) {
   switch (msg) {
     case 'A':         // Start a AD-LIBITUM TRIAL
-      responseMode = "AL";
-      return 'A';
+      trial_adLibitum();
+      break;
     case 'P':         // Start a PAVLOVIAN TRIAL
-      return 'P';
+      trial_pavlovian();
+      break;
     case 'T':         // Start a CONDITIONAL TRIAL
-      return 'T';
+      trial_condReward();
+      break;
     case 'Z':         // Response window for FOOC-CUE
       responseMode = "FC";
-      return 'Z';
+      break;
     case 'X':         // Response window for QUININE-CUE
       responseMode = "QC";
-      return 'X';
+      break;
     case 'C':         // Response window for NEUTRAL-CUE
       responseMode = "NC";
-      return 'C';
+      break;
     case 'I':         // Start of an INTERTRIAL
-      return 'I';
+      responseMode = "none";
+      break;
     case 'R':         // Deliver a single dose of ENSURE
       deliver_ensure();
-      return 'R';
+      break;
     case 'V':         // Deliver a single dose of QUININE
       deliver_quinine();
-      return 'V';
+      break;
     case 'L':         // Fast FORWARD of the ENSURE syringe pump
       ff_quinine();
-      return 'L';
+      break;
     case 'K':         // Fast BACKWARD of the ENSURE syringe pump
       fb_quinine();
-      return 'K';
+      break;
     case 'M':         // Fast FORWARD of the quinine syringe pump
       ff_quinine();
-      return 'M';
+      break;
     case 'N':         // Fast BACKWARD of the quinine syringe pump
       fb_quinine();
-      return 'N';
+      break;
     default:          // if nothing else matches, do the default
-      return msg;
+      break;
   }
+  return msg;
 }

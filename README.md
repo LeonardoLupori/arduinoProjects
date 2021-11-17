@@ -6,7 +6,7 @@ A collection of various projects, including code, hardware and 3D models to make
 ## Heating pad for mice
 > Completeness: :yellow_heart::yellow_heart::yellow_heart::yellow_heart::white_heart:
 
-|||
+|<!-- -->|<!-- -->|
 |---|---|
 |Microcontroller|Arduino nano (or its clones)|
 |Code available|:heavy_check_mark:|
@@ -16,6 +16,7 @@ A collection of various projects, including code, hardware and 3D models to make
 
 ## Setup for Food-Cue preference Go/NoGo task
 > Completeness: :yellow_heart::yellow_heart::white_heart::white_heart::white_heart:
+
 |||
 |---|---|
 |Microcontroller|ESP32|
@@ -24,6 +25,7 @@ A collection of various projects, including code, hardware and 3D models to make
 
 ## Setup for pavlovian conditioning (+pupillometry)
 > Completeness: :yellow_heart::yellow_heart::white_heart::white_heart::white_heart:
+
 |||
 |---|---|
 |Microcontroller|Teensy3.5|

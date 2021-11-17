@@ -26,6 +26,7 @@ int THRESHOLD = 20;                             // Threshold value below which a
 
 // SERIAL COMMUNICATION
 // ---------------------------------
+const float POSITION_SAMPL_RATE = 20;           // Sampling rate (Hz) of the running wheel position through serial communication
 const bool ECHO_FROM_ARDUINO = true;            // Sends back the serial messages that it recieves. (debugging purposes; default false)
 
 // STEPPER MOTORS
@@ -39,7 +40,12 @@ const int NUM_STEP_DELIVERY = 100;          // Number of steps for delivering En
 const int NUM_STEP_FAST_DELIVERY = 1000;    // Number of steps for Fast-Forward or -Backward movements
 const int STEP_LENGHT_MICROSECONDS = 500;   // Length of each step pulse in micro seconds
 
-
+// ROTARY ENCODER
+// ---------------------------------
+const int PPR = 600;                        // Pulses Per Revolution. Put here the specific of your rotary encoder of choice
+const int RUNNING_WHEEL_RADIUS_CM = 10;     // Radius of the running wheel in centimeters (needed to convert angle to  distance)
+const int PIN_ROTENCODER_A = 2;             // Pin to connect the A channel of the encoder. NOTE, this pin has to support interrupts. Pin 2 on most boards
+const int PIN_ROTENCODER_B = 3;             // Pin to connect the B channel of the encoder. Pin 3 on most boards
 
 // --------------------------------------------------------------
 // GLOBAL VARIABLES (do not edit!)
@@ -47,9 +53,11 @@ const int STEP_LENGHT_MICROSECONDS = 500;   // Length of each step pulse in micr
 
 // BEHAVIOR
 // ---------------------------------
+const int sendPosDelay = int((1 / POSITION_SAMPL_RATE) * 1000);   // Delay (in milliseconds) between each running position sent by serial
 String responseMode = "none";         // Can be "FC","QC","NC","AL" or "none"
 long trialStartTime = 0;              // Time (ms) since the last trial start
-long runningPosition = 0;             // Stores the current distance run by the mouse
+volatile long runningPosition = 0;    // Stores the current distance run by the mouse
+float runningPosition_cm = 0;         // Stores the distance run by the mouse in centimeters
 
 // LICKING
 // ---------------------------------
@@ -72,7 +80,7 @@ void sendDistance_Clbk();
 void sendLick_clbk();
 
 // INITIALIZE MOVING AVERAGE (for lick sensor)
-movingAvg touchMovingAvg(5);    // use 5 data points for the moving average
+movingAvg touchMovingAvg(3);
 
 /* *CORE: 0*  INITIALIZE DUAL CORE TASK
    --------------------------------------------------------------
@@ -97,7 +105,7 @@ TaskHandle_t stepManager;
 Scheduler taskManager;
 
 // FIRST TASK
-Task task_SendDistance(5000, TASK_FOREVER, &sendDistance_Clbk);
+Task task_SendDistance(sendPosDelay, TASK_FOREVER, &sendDistance_Clbk);
 // SECOND TASK
 Task task_SendLick(1, TASK_FOREVER, &sendLick_clbk);
 
@@ -107,6 +115,7 @@ Task task_SendLick(1, TASK_FOREVER, &sendLick_clbk);
 // --------------------------------------------------------------
 void setup() {
   Serial.begin(115200);
+  Serial.println(sendPosDelay);
   delay(100);                           // Short delay to allow the serial communication to complete
   welcomeMesage();                      // Welcome message
 
@@ -116,11 +125,13 @@ void setup() {
   pinMode(PIN_STEP_QUININE, OUTPUT);
   pinMode(PIN_DIR_ENSURE, OUTPUT);
   pinMode(PIN_DIR_QUININE, OUTPUT);
-  digitalWrite(PIN_DIR_ENSURE, HIGH);   // Default the direction to high
-  digitalWrite(PIN_DIR_QUININE, HIGH);  // Default the direction to high
+  digitalWrite(PIN_DIR_ENSURE, HIGH);       // Default the direction to high
+  digitalWrite(PIN_DIR_QUININE, HIGH);      // Default the direction to high
+  pinMode(PIN_ROTENCODER_A, INPUT_PULLUP);  // internal pullup input pin A 
+  pinMode(PIN_ROTENCODER_B, INPUT_PULLUP);  // internal pullup input pin B
 
-  touchMovingAvg.begin();               // Start the moving average object
-  if (AUTO_THRESHOLD_CALIBRATION) {     // Perform auto calibration, if requested
+  touchMovingAvg.begin();                   // Start the moving average object
+  if (AUTO_THRESHOLD_CALIBRATION) {         // Perform auto calibration, if requested
     lickAutoCalibration();
   }
 
@@ -158,6 +169,31 @@ void loop() {
 // ADDITIONAL FUNCTIONS
 // --------------------------------------------------------------
 
+// Interrupt function to measure position from the Rotary Encoder
+// ---------------------------------
+void readEncoder() {
+  // This function is activated if the Encoder channel A is going from LOW to HIGH.
+  // It then checks Encoder Channel B to determine the direction.
+  if(digitalRead(PIN_ROTENCODER_B)==LOW) {
+    runningPosition++;
+  }else{
+    runningPosition--;
+  }
+}
+
+float getCurrentPosition_cm() {
+  /* runningPosition is stored as a long datatype (4 bytes) and requires multiple CPU cycles
+   * to be read. It's safer to disable interrupts while reading the number to avoid
+   * an interrupt modifying its value in-between the CPU cycles needed to read it.
+   */
+  noInterrupts();                                             // Disable interrupts
+  float positionRadians = (runningPosition * TWO_PI) / PPR;   // Calculate the current total angle (radians) made by the running wheel
+  interrupts();                                               // Re-enable interrupts
+  return positionRadians*RUNNING_WHEEL_RADIUS_CM;
+}
+
+// Generate a basic welcome message on the serial monitor
+// ---------------------------------
 void welcomeMesage() {
   for (int i = 0; i < 29; i++) {
     Serial.print("*");
@@ -172,6 +208,8 @@ void welcomeMesage() {
 }
 
 
+// Performs the Auto-Calibration of the threshold for the lick sensor
+// ---------------------------------
 void lickAutoCalibration() {
   int numSampledReadings = 500;       // How many samples to read for the baseline
   int totalReading = 0;               // Stores the sum of all readings

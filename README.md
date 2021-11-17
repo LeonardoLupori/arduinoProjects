@@ -4,7 +4,6 @@ A collection of various projects, including code, hardware and 3D models to make
 # Projects overview
 
 ## [Heating pad for mice](mouseHeatingPad) 
-> Go to this project -> [:link:](https://github.com/LeonardoLupori/arduinoProjects/tree/main/mouseHeatingPad)  
 > Completeness: :yellow_heart::yellow_heart::yellow_heart::yellow_heart::white_heart:
 
 ||Description|
@@ -15,8 +14,7 @@ A collection of various projects, including code, hardware and 3D models to make
 
 3D-printable, Arduino-based heating pad for anesthetized mice. Small form factor heating pad to keep animals at a physiological temperature. Can be used for surgeries or for head-fixed experiments (e.g., two-photon recordings in anesthetized mice)
 
-## Setup for Food-Cue preference Go/NoGo task
-> Go to this project -> [:link:](https://github.com/LeonardoLupori/arduinoProjects/tree/main/foodCuePreference)  
+## [Setup for Food-Cue preference Go/NoGo task](foodCuePreference)
 > Completeness: :yellow_heart::yellow_heart::white_heart::white_heart::white_heart:
 
 ||Description|
@@ -25,8 +23,7 @@ A collection of various projects, including code, hardware and 3D models to make
 |*Code available*|:heavy_check_mark:|
 |*3D files available*|:x:|
 
-## Setup for pavlovian conditioning (+pupillometry)
-> Go to this project -> [:link:](https://github.com/LeonardoLupori/arduinoProjects/tree/main/cuedConditioning)  
+## [Setup for pavlovian conditioning](cuedConditioning) (+pupillometry) 
 > Completeness: :yellow_heart::yellow_heart::white_heart::white_heart::white_heart:
 
 ||Description|

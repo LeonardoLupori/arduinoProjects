@@ -71,7 +71,6 @@ void fb_quinine() {
 }
 
 
-
 // STEPPER MOTORS MANAGER
 // ---------------------------------------------------
 /* This function is the main manager of stepper motors.

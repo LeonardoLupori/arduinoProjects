@@ -1,7 +1,8 @@
 // Task callback for sending the current threadmill position
 // ---------------------------------------------------
 void sendDistance_Clbk() {
-  String message = packageMessage("d", millis(), runningPosition);
+  runningPosition_cm = getCurrentPosition_cm();
+  String message = packageMessage("d", millis(), runningPosition_cm);
   Serial.println(message);
 }
 

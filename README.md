@@ -3,7 +3,8 @@ A collection of various projects, including code, hardware and 3D models to make
 
 # Projects overview
 
-## Heating pad for mice [:link:](https://github.com/LeonardoLupori/arduinoProjects/tree/main/mouseHeatingPad)
+## Heating pad for mice 
+> [:link:](https://github.com/LeonardoLupori/arduinoProjects/tree/main/mouseHeatingPad)  
 > Completeness: :yellow_heart::yellow_heart::yellow_heart::yellow_heart::white_heart:
 
 |<!-- -->|<!-- -->|

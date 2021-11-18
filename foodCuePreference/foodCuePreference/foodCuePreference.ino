@@ -22,7 +22,7 @@
 const int PIN_LICKSENSOR = 32;                  // Pin Number of the lick sensor
 const bool AUTO_THRESHOLD_CALIBRATION = true;   // Automatically sets the threshold to half the baseline
 int THRESHOLD = 20;                             // Threshold value below which a lick is detected
-// This value is overwritten if AUTO_THRESHOLD_CALIBRATION==true
+                                                // This value is overwritten if AUTO_THRESHOLD_CALIBRATION==true
 
 // SERIAL COMMUNICATION
 // ---------------------------------
@@ -64,7 +64,6 @@ float runningPosition_cm = 0;         // Stores the distance run by the mouse in
 int sensorReading = 0;                // Stores the last reading of the lick sensor
 int readingMovingAvg = 0;             // Stores the last updated running average reading of the lick sensor(less noisy)
 bool touched = false;                 // Whether the lick sensor is currently being touched or not
-bool lickResponseDetected = false;    //
 
 // STEPPER MOTORS
 // ---------------------------------
@@ -115,7 +114,6 @@ Task task_SendLick(1, TASK_FOREVER, &sendLick_clbk);
 // --------------------------------------------------------------
 void setup() {
   Serial.begin(115200);
-  Serial.println(sendPosDelay);
   delay(100);                           // Short delay to allow the serial communication to complete
   welcomeMesage();                      // Welcome message
 
